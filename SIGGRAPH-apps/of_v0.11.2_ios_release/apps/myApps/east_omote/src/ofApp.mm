@@ -5,50 +5,44 @@
 #import "AVFoundationVideoPlayer.h"
 
 //-------------------------------------------------------------- video controls.
-
+//north_ura
 //--------------------------------------------------------------
 void ofApp::setup() {
-	ofSetFrameRate(30);
-	ofBackground(0, 0, 0);
+    ofSetFrameRate(30);
+    ofBackground(0, 0, 0);
     receiver.setup(PORT);
-    tranps.resize(2);
+    movies.resize(4);
+    textImages.resize(2);
     flipped.resize(2, false);
-	tranps[0].load("card3_omote.mov");
-    tranps[1].load("card2_omote.mov");
+    movies[0].load("card2_omote.mov");
+    movies[1].load("card3_omote.mov");
+    movies[2].load("Rdoragon_F.mp4");
+    movies[3].load("eastrev.mp4");
+    textImages[0].load("SIGGRAPHkoW.PNG");
+    textImages[1].load("SIGGRAPHkoY.PNG");
     keyStatus = 'n';
     nowStatus = 0;
+    textIndex = 0;
+    incre = 0;
     window.setOrientation(OF_ORIENTATION_90_LEFT);
-    for(int i = 0; i < (int)tranps.size(); ++i) {
-        tranps[i].setLoopState(OF_LOOP_NORMAL);
-        tranps[i].play();
+    for(int i = 0; i < (int)movies.size(); ++i) {
+        movies[i].setLoopState(OF_LOOP_NORMAL);
+        if(i < 2) movies[i].play();
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    duration = tranps[0].getTotalNumFrames();
-    if(nowStatus == 1){
-        for(int i = 0; i < (int)tranps.size(); ++i){
-            if(!tranps[i].isLoaded()) return;
-            if(!flipped[i]){
-                if(tranps[i].getCurrentFrame() > duration / 2){
-                    flipped[i] = true;
-                    tranps[i].setPaused(true);
-                }
-            }
-            else{
-                if(tranps[i].getCurrentFrame() <= duration / 2){
-                    flipped[i] = false;
-                    tranps[i].setPaused(true);
-                }
-            }
-            tranps[i].update();
-        }
+    duration = movies[0].getTotalNumFrames();
+    if(nowStatus == 0){
+        movies[0].update();
+        movies[1].update();
     }
-    else{
-        for(int i = 0; i < (int)tranps.size(); ++i){
-            tranps[i].update();
-        }
+    else if(nowStatus == 1){
+        movies[2].update();
+    }
+    else if(nowStatus == 2){
+        movies[3].update();
     }
     while(receiver.hasWaitingMessages()){
         ofxOscMessage m;
@@ -56,12 +50,50 @@ void ofApp::update(){
         cout << m.getAddress() << endl;
         if(m.getAddress() == "/key/pressed"){
             keyStatus = m.getArgAsChar(0);
-            if(keyStatus == 't'){
-                nowStatus = 1;
+            cout << keyStatus << endl;
+            if(keyStatus == '2'){
+                if(nowStatus != 3){
+                    for(int i = 0; i < movies.size(); ++i){
+                        if(movies[i].isPlaying()){
+                            movies[i].setPaused(false);
+                        }
+                    }
+                    nowStatus = 3;
+                }
+                else{
+                    textIndex = (incre == yellowIndex);
+                    incre = (incre + 1) % 4;
+                }
             }
-            else if(keyStatus == 'r'){
-                for(int i = 0; i < (int)tranps.size(); ++i){
-                    tranps[i].setFrame(0);
+            else if(keyStatus == '1'){
+                for(int i = 0; i < (int)movies.size(); ++i){
+                    if(movies[i].isPlaying()){
+                        movies[i].setPaused(true);
+                    }
+                }
+                if(nowStatus > 3){
+                    nowStatus = 0;
+                }
+                nowStatus = (nowStatus + 1) % 3;
+                if(nowStatus == 0){
+                    movies[0].setPaused(false);
+                    movies[1].setPaused(false);
+                }
+                else if(nowStatus == 1){
+                    movies[2].setPaused(false);
+                }
+                else{
+                    movies[3].setPaused(false);
+                }
+            }
+            else if(keyStatus == '9'){
+                if(nowStatus == 3){
+                    textIndex = (textIndex + 1) % 2;
+                }
+            }
+            else if(keyStatus == '0'){
+                for(int i = 0; i < (int)movies.size(); ++i){
+                    movies[i].setFrame(0);
                 }
             }
         }
@@ -71,8 +103,22 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     windowWidth = window.getHeight();
-    for(int i = 0; i < (int)tranps.size(); ++i) {
-        tranps[i].getTexturePtr()->draw(windowWidth / 2 + 240 * (-1 + i), 20, 240, 360);
+    //cout << window.getHeight() << ' ' << window.getWidth() << endl;
+    if(nowStatus == 0){
+        for(int i = 0; i < 2; ++i) {
+            if(i == 0) movies[i].getTexturePtr()->draw(windowWidth / 2 + 280 * (-1 + i), 0, 240, 428);
+            else movies[i].getTexturePtr()->draw(windowWidth / 2 + 260 * (-1 + i), 10, 240, 420);
+        }
+    }
+    else if(nowStatus == 1){
+        //cout << movies[2].getWidth() << ' ' << movies[2].getHeight() << endl;
+        movies[2].getTexturePtr()->draw(windowWidth / 2 - 225, 0, 450, 800);
+    }
+    else if(nowStatus == 2){
+        movies[3].getTexturePtr()->draw(0, 0);
+    }
+    else if(nowStatus == 3){
+        textImages[textIndex].draw(77, 0, 1040, 780);
     }
 }
 
@@ -122,13 +168,6 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(int x, int y, int id){
-    cout << x << ' ' << y << ' ' << id << endl;
-    if(windowWidth / 2 - tranps[0].getWidth() < x && x < windowWidth / 2){
-        tranps[0].setPaused(false);
-    }
-    else if(windowWidth / 2 < x && x < windowWidth / 2 + tranps[1].getWidth()){
-        tranps[1].setPaused(false);
-    }
 }
 
 //--------------------------------------------------------------

@@ -4,9 +4,9 @@
 #include "ofxOSC.h"
 #define PORT 8000
 class ofApp : public ofxiOSApp{
-	
+    
 public:
-		
+        
     void setup();
     void update();
     void draw();
@@ -17,7 +17,7 @@ public:
     void touchUp(ofTouchEventArgs & touch);
     void touchDoubleTap(ofTouchEventArgs & touch);
     void touchCancelled(ofTouchEventArgs & touch);
-	
+    
     void lostFocus();
     void gotFocus();
     void gotMemoryWarning();
@@ -37,7 +37,8 @@ public:
     void muteOnPressed();
     void muteOffPressed();
 private:
-    vector<ofxiOSVideoPlayer> tranps;
+    vector<ofxiOSVideoPlayer> movies;
+    vector<ofImage> textImages;
     vector<bool> flipped;
     int duration;
     int windowWidth;
@@ -45,4 +46,7 @@ private:
     ofAppiOSWindow window;
     char keyStatus;
     int nowStatus;
+    int textIndex;
+    int incre;
+    const int yellowIndex = 2;
 };

@@ -37,7 +37,8 @@ public:
     void muteOnPressed();
     void muteOffPressed();
 private:
-    vector<ofxiOSVideoPlayer> tranps;
+    vector<ofxiOSVideoPlayer> movies;
+    vector<ofImage> textImages;
     vector<bool> flipped;
     int duration;
     int windowWidth;
@@ -45,4 +46,7 @@ private:
     ofAppiOSWindow window;
     char keyStatus;
     int nowStatus;
+    int textIndex;
+    int incre;
+    const int yellowIndex = 0;
 };
