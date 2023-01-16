@@ -16,7 +16,17 @@ MacでXcodeを用いてSIGGRAPHSenderのプロジェクトをMac自身に、myap
 ## usage
 Mac側のアプリは真っ黒の画面のみが表示されているが、キー入力を行うことでiPad側に命令を送ることができる。
 具体的には、数字キーのみが命令を送るキーとして設定されており、以下のような制御系統になっている。なお、最初はカードが表示されている。
-![制御系統](https://user-images.githubusercontent.com/61530989/212664496-5fe4b8d6-93f8-4d73-a1d8-5f0161b2225c.png)
+![図1](https://user-images.githubusercontent.com/61530989/212664974-8571ad6d-228c-4aad-82f3-582dac404f7d.png)
+
+## 注意点
+本アプリはOSC通信を用いているため、インストールする前に`SIGGRAPHSender/src/ofApp.cpp`の
+```c++
+void ofApp::setup(){
+    ofBackground(0, 0, 0);
+    const string HOSTs[8] = {"192.168.11.16", "192.168.11.7", "192.168.11.18", "192.168.11.20", "192.168.11.21", "192.168.11.19", "192.168.11.12", "192.168.11.15"};
+```
+
+
 
 ## 補足
 これはMacのXcodeを用いてビルドすることを想定しているが、[openframeworksの公式サイト](https://openframeworks.cc/ja/download/)からWindowsのvisual studioをダウンロードすれば同様に実装できる(はず)。
