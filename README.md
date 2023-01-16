@@ -31,6 +31,9 @@ void ofApp::setup(){
 
 さらに、WiFiによっては通信がブロックされてしまう可能性がある。ビルドができているのにキーを押しても変化がない場合は、別のwiFiで試してみてほしい。
 
-
 ## 補足
 これはMacのXcodeを用いてビルドすることを想定しているが、[openframeworksの公式サイト](https://openframeworks.cc/ja/download/)からWindowsのvisual studioをダウンロードすれば同様に実装できる(はず)。
+
+## Future work
+最初はLeap Motionで実際にトランプを触ったらカードがフリップとかやりたかったけど、M1 MacにLeap Motionが対応していなくて今後も対応させる予定がないらしいので諦めた。
+Windowsを使っている人は是非そっち方向でインタラクションを拡張してもらえたらと思う。
